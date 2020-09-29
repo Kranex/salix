@@ -13,6 +13,7 @@ import salix::HTML;
 import salix::Core;
 import lang::xml::DOM;
 import salix::lib::Blockly;
+import String;
 import IO;
 
 // inits the app
@@ -28,7 +29,7 @@ App[Model] blocklyWebApp()
 
 // the model for the IDE.
 alias Model = tuple[
-  str src 
+  str src
 ];
   
 // init the IDE  
@@ -44,19 +45,124 @@ Model init() {
 // The doors state machine.
 str workspace() = "Start using blockly and your code will be generated here!";
 
+str data2state(Node \data){
+	if (charData(txt) := \data) return txt;
+	return "ERROR: NOT CHAR DATA";	
+}
+
+str event2state(Node event) {
+	str name = [nm | charData(nm) <- event.children][0];
+	return "<name> <toUpperCase(name)>";	
+} 
+
+
+list[Node] getAttributes(Node element) = [attr | attr <- element.children, attribute(_,_,_) := attr];
+list[Node] getElements(Node element) = getElements(element.children);
+list[Node] getElements(list[Node] children) = [elm | elm <- children, element(_,_,_) := elm];
+list[Node] getElementsByType(str \type, list[Node] children) = [elm | elm <- children, getAttribute("type", elm) == \type];
+
+str getAttribute(str name, Node element) = getAttribute(name, element.children);
+str getAttribute(str name, list[Node] children) {
+	for (child <- children) {
+ 		if (attribute(_, name, val) := child) {
+ 			return val;
+ 		}
+	}
+	return "";
+} 
+
+
+Node getElement(str name, Node element) = getElement(name, element.children);
+Node getElement(str name, list[Node] children) {
+	for (child <- children) {
+ 		if (element(_, name, _) := child) {
+ 			return child;
+ 		}
+	}
+	return comment("NULL");
+} 
+
+str getData(Node element) {
+	for (child <- element.children) {
+		if (charData(dat) := child) {
+			return dat;
+		}
+	}
+	return "NULL";	
+}
+
+str getValue(str name, list[Node] children) {
+	for(child <- children) {
+		switch(child){
+			case element(_, "value", block): 
+				if (getAttribute("name", child) == name) {
+						return getValue(name, block);
+				}
+			case element(_, "block", _):
+				return getData(getElement("field", child));
+		}
+	}
+	return "NULL";
+}
+
+str block2state(str name, list[Node] children) {
+	switch(name) {
+		case "event":
+			return "<getData(getElement("field", children))>";	
+		case "state_declaration":
+			return "state <getValue("STATE", getElements(children))><node2state(getElement("statement", children))>
+			       'end";	
+		case "state":
+			return "<getData(getElement("field", children))>";	
+		case "transition":
+			return "
+				   '  <getValue("EVENT", getElements(children))> =\> <getValue("STATE", getElements(children))><node2state(getElement("next", children))>";	
+	}
+	return "";
+}
+
+str element2state(str name, list[Node] children) {
+	switch(name) {
+		case "xml": 	return "<for(child <- [c | c <- [getElement("variables", children )] + getElementsByType("state_declaration", children)]){>
+							   '<node2state(child)>
+							   '<}>";
+							   
+		case "variables": 	return "events<for(child <- [c | c <- children, any(a <- c.children, attribute(_,"type", "Event") := a)]){>
+				   				   '  <event2state(child)><}>
+				   				   'end";
+		case "block":		return block2state(getAttribute("type", children), getElements(children));
+		case "value":		return "";
+		case "statement":	return "<for(child <- getElements(children)){><node2state(child)><}>";
+		case "field":		return "";
+		case "next":		return "<for(child <- getElements(children)){><node2state(child)><}>";
+
+	}
+	return "";
+}
+
+str node2state(Node \node) {	
+	switch(\node) {
+		case document(root):
+			return node2state(root);
+	    case element(_, name, children):
+	    	return element2state(name, children);
+		case charData(\data):
+			return "<\data>";
+	}
+	
+	return "";
+}
 
 data Msg
   = blocklyChange(str text);
-
+  
 // update the model with from the msg.
 Model update(Msg msg, Model model) {
 
   switch (msg) {
     // update from blockly
-    case blocklyChange(str text): model.src = xmlPretty(parseXMLDOM(text));
-    
+    case blocklyChange(str text): model.src = node2state(parseXMLDOM(text));
   }
-  
   return model;
 }
 
@@ -73,94 +179,57 @@ void view(Model model) {
       div(class("col-md-8"), () {
         h4("Edit");
         blockly("myBlockly", onChange(Msg::blocklyChange), () {
-        	category("Control", hue(90), () {
-        		block(
-        			"if", 
-        			\type("controls_if"),
-        			hue(90), 
-        			nextStatement(""),
-        			previousStatement(""),
-					() {
-						message("if %1 then", () {
-							inputValue("CONDITION", check = ["Boolean"]);
-						});
-						message("%1", () {
-							inputStatement("THEN");
+        	category("Event", hue(0), () {
+        		block("Event",
+        			\type("event"),
+        			hue(0),
+ 					output("Event"),
+ 					inputsInline(true),
+        			() {
+        				message("%1", () {
+        					fieldVariable("ID", variableTypes = ["Event"], defaultType = "Event");
         				});
-        			}
-        		);
-        		block(
-        			"omni-block",
-        			\type("oni_block"),
-        			hue(90),
-        			() {
-        				message("input value: %1", (){inputValue("VALUE");}); 
-        				message("input statement: %1", (){inputStatement("STATEMENT");}); 
-        				message("input dummy: %1", (){inputDummy();}); 
-        				message("field input: %1", (){fieldInput("INPUT", text="cake", spellcheck=true);}); 
-        				message("field dropdown: %1", (){fieldDropdown("DROP", [item("cale","cale")]);}); // BROKEN 
-        				message("field checkbox: %1", (){fieldCheckbox("CHECKBOX", checked=true);}); 
-        				message("field color: %1", (){fieldColor("COLOR", color="#ff4040", colorOptions=["#ff4040", "#4040ff"], colorTitles=["dark pink", "dark blue"],columns=0);}); 
-        				message("field number: %1", (){fieldNumber("NUMBER", val=7.0, min=0, max=28, precision=2);});
-        				message("field angle: %1", (){fieldAngle("ANGLE", angle=90);});
-        				message("field variable: %1", (){fieldVariable("VARIABLE");});
-        				//message("date input: %1", (){fieldDate("DATE");});// BROKEN; Not part of blockly anymore?!
-        				message("field label: %1", (){fieldLabel("Label example");});
-        				message("field serializable label: %1", (){fieldLabelSerializable("Label", "sLabel example");});
-        				message("field image: %1", (){fieldImage("https://developers.google.com/blockly/images/logos/logo_built_on.png", 496, 179, alt="built on blockly");});
-        			}
-				);
-        	});
-        	category("Logic", hue(180), () {
-        		block(
-        			"equals",
-        			\type("logic_equals"),
-        			hue(180),
-        			output("Boolean"),
-        			inputsInline(true),
-        			() {
-        				message("%1 == %2", () {
-        					inputValue("A");
-        					inputValue("B");
-        				});
-        			}
-        		);
-        		block(
-        			"true",
-        			\type("logic_true"),
-        			hue(180),
-        			output("Boolean"),
-        			() {
-        				message("true");
         			}
         		);
         	});
-        	category("Math", hue(270), () {
-        		block(
-        			"add",
-        			\type("math_addition"),
-        			hue(270),
-        			output("Number"),
+        	category("State", hue(180), () {
+        		block("State Declaration",
+        			\type("state_declaration"),
+        			hue(180),
         			inputsInline(true),
         			() {
-        				message("%1 + %2", () {
-        					inputValue("A", check=["Number"]);
-        					inputValue("B", check=["Number"]);
+        				message("state %1", () {
+        					inputValue("STATE", check = ["State"]);
+        				});
+        				message("%1", () {
+        					inputStatement("TRANSITIONS");
         				});
         			}
         		);
-        		block(
-        			"Number",
-        			\type("math_number"),
-        			hue(270),
-        			output("Number"),
+        		block("Transition",
+        			\type("transition"),
+        			hue(180),
+        			nextStatement(),
+        			previousStatement(),
+        			inputsInline(true),
         			() {
-        				message("%1", (){
-        					fieldNumber("VALUE");
+        				message("%1 =\> %2", () {
+        					inputValue("EVENT", check = ["Event"]);
+        					inputValue("STATE", check = ["State"]);        					
         				});
         			}
         		);
-        		
+        		block("State",
+        			\type("state"),
+        			hue(180),
+ 					output("State"),
+ 					inputsInline(true),
+        			() {
+        				message("%1", () {
+        					fieldVariable("ID", variableTypes = ["State"], defaultType = "State");
+        				});
+        			}
+        		);
         	});
         });
       });

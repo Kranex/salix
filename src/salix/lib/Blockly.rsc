@@ -100,8 +100,8 @@ Attr id(str val) = attr("id", val);
 Attr tooltip(str val) = attr("tooltip", val);
 Attr helpUrl(str val) = attr("helpUrl", val);
 Attr webClass(str val) = attr("web-class", val);
-Attr nextStatement(str val) = attr("nextStatement", val);
-Attr previousStatement(str val) = attr("previousStatement", val);
+Attr nextStatement(str val = "") = attr("nextStatement", val);
+Attr previousStatement(str val = "") = attr("previousStatement", val);
 Attr output(str val) = attr("output", val);
 Attr inputsInline(bool val) = attr("inputsInline", "<val>");
 
@@ -261,7 +261,7 @@ void fieldInput(str name, str text = "", bool spellcheck = false)
 	= addToParent(_argument("field_input", ("name": name, "text": text, "spellcheck": spellcheck)));
 	
 void fieldDropdown(str name, list[Option] options){
-	list[lrel[value, str]] opts = [];
+	lrel[value, str] opts = [];
 	for(opt <-options){
 		switch(opt){
 			case item(str name, str text):
@@ -362,8 +362,6 @@ void blockly(str id, value vals...){
 		stack = [_toolbox()];
 		T();
 	}
-	
-	println(toolbox2json(stack[0]));
 	
   	build(vals[0..-1], Node(list[Node] _, list[Attr] attrs){
     	return native("blockly", id, attrsOf(attrs), propsOf(attrs), eventsOf(attrs), extra = ("toolbox": xmlPretty(toolbox2xml(stack[0])), "blocks" : toolbox2json(stack[0])));
