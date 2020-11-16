@@ -123,7 +123,7 @@ function registerBlockly(salix) {
 		}
 
 		console.log(options.toolbox);
-
+		
 		var div = document.createElement('div');
 		div.setAttribute("id", "blocklyDiv");
 		if(resizable){

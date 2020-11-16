@@ -180,8 +180,7 @@ void view(Model model) {
         h4("Edit");
         blockly("myBlockly", onChange(Msg::blocklyChange), () {
         	category("Event", hue(0), () {
-        		block("Event",
-        			\type("event"),
+        		block("event",
         			hue(0),
  					output("Event"),
  					inputsInline(true),
@@ -193,8 +192,7 @@ void view(Model model) {
         		);
         	});
         	category("State", hue(180), () {
-        		block("State Declaration",
-        			\type("state_declaration"),
+        		block("state_seclaration",
         			hue(180),
         			inputsInline(true),
         			() {
@@ -206,8 +204,7 @@ void view(Model model) {
         				});
         			}
         		);
-        		block("Transition",
-        			\type("transition"),
+        		block("transition",
         			hue(180),
         			nextStatement(),
         			previousStatement(),
@@ -219,8 +216,7 @@ void view(Model model) {
         				});
         			}
         		);
-        		block("State",
-        			\type("state"),
+        		block("state",
         			hue(180),
  					output("State"),
  					inputsInline(true),

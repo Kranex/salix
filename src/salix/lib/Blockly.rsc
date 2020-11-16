@@ -128,7 +128,7 @@ list[Node] element2xml(_Element elmnt) {
 		case _separator(map[str, str] attrs):
 			return [element("sep", attrs2xml(["gap"], attrs))];
 		case _block(map[str, str] attrs):
-			return [element("block", attrs2xml(["name", "type", "colour", "disabled"], attrs) + [ w | [w] <- [element2xml(e) | e <-elmnt.elements]])];
+			return [element("block", attrs2xml(["type", "colour", "disabled"], attrs) + [ w | [w] <- [element2xml(e) | e <-elmnt.elements]])];
 		case _shadow(map[str, str] attrs):
 			return [element("shadow", attrs2xml(["name", "type", "colour", "disabled"], attrs) + [ w | [w] <- [element2xml(e) | e <-elmnt.elements]])];
 		case _value(map[str, str] attrs):
@@ -236,9 +236,9 @@ void category(str name, value vals...){
 void separator(value vals...) = addToParent(_separator(getAttrs(vals)));
 
 // the closure for a block.
-void block(str name, value vals...){
+void block(str \type, value vals...){
 	_Element cur = addChildren(_block(getAttrs(vals)), vals);
-	cur.attrs["name"] = name;
+	cur.attrs["type"] = \type;
 	addToParent(cur);
 }
 
