@@ -24,14 +24,8 @@ function registerBlockly(salix) {
     var height = "450px";
 
     var options = {
-      toolbox: '<xml><block type="controls_if"></block></xml>'
+      toolbox: extra.toolbox
     };
-
-    if(extra.toolbox != null) {
-      options.toolbox = extra.toolbox;
-    }
-
-    console.log(extra.blocks);
 
     for (var key in props){
       if(props.hasOwnProperty(key)){
@@ -119,10 +113,8 @@ function registerBlockly(salix) {
       }
     }
 
-    console.log(options.toolbox);
-
     var div = document.createElement('div');
-    div.setAttribute("id", "blocklyDiv");
+    div.setAttribute("id", id);
     if(resizable){
       div.setAttribute("style", "position: absolute");
     } else {
@@ -131,7 +123,7 @@ function registerBlockly(salix) {
     attach(div);
 
         // Create Blockly
-    var workspace = Blockly.inject('blocklyDiv', options);
+    var workspace = Blockly.inject(id, options);
     workspaces[id] = workspace;
     Blockly.defineBlocksWithJsonArray(extra.blocks);
     // Salix
