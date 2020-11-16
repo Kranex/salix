@@ -1,5 +1,4 @@
 function registerBlockly(salix) {
-
   var workspaces = {};
 
   salix.Decoders.blocklyChange = function (args) {
@@ -40,82 +39,82 @@ function registerBlockly(salix) {
 
         switch(key){
           case 'resizable':
-             resizable = val;
+            resizable = val;
             break;
           case 'width':
-              width = val;
+            width = val;
             break;
           case 'height':
-                      height = val;
+            height = val;
             break;
           case 'collapse':
-                      options.collapse = val;
+            options.collapse = val;
             break;
           case 'comments':
-                      options.comments = val;
+            options.comments = val;
             break;
           case 'css':
-                      options.css = val;
+            options.css = val;
             break;
           case 'disable':
-                      options.disable = val;
+            options.disable = val;
             break;
           case 'grid':
-                      options.grid = val;
+            options.grid = val;
             break;
           case 'horizontallayout':
-                      options.horizontallayout = val;
+            options.horizontallayout = val;
             break;
           case 'maxBlocks':
-                      options.maxBlocks = val;
+            options.maxBlocks = val;
             break;
           case 'maxInstances':
-                      options.maxInstances = val;
+            options.maxInstances = val;
             break;
           case 'media':
-                      options.media = val;
+            options.media = val;
             break;
           case 'move':
-                      options.move = val;
+            options.move = val;
             break;
           case 'oneBasedIndexing':
-                      options.oneBasedIndexing = val;
+            options.oneBasedIndexing = val;
             break;
           case 'readOnly':
-                      options.readOnly = val;
+            options.readOnly = val;
             break;
           case 'rtl':
-                      options.rtl = val;
+            options.rtl = val;
             break;
           case 'scrollBars':
-                      options.scrollBars = val;
+            options.scrollBars = val;
             break;
           case 'sounds':
-                      options.sounds = val;
+            options.sounds = val;
             break;
           case 'theme':
-                      options.theme = val;
+            options.theme = val;
             break;
           case 'toolbox':
-                      options.toolbox = val;
+            options.toolbox = val;
             break;
           case 'toolboxPosition':
-                      options.toolboxPosition = val;
+            options.toolboxPosition = val;
             break;
           case 'trashcan':
-                      options.trashcan = val;
+            options.trashcan = val;
             break;
           case 'maxTrashcanContents':
-                      options.maxTrashcanContents = val;
+            options.maxTrashcanContents = val;
             break;
           case 'zoom':
-                      options.zoom = val;
+            options.zoom = val;
             break;
           case 'renderer':
-                      options.renderer = val;
+            options.renderer = val;
             break;
           default:
-              break;
+            break;
         }
       }
     }
@@ -146,22 +145,22 @@ function registerBlockly(salix) {
       }
     }
 
-        // Salix
-        function patch(edits, attach){
-        edits = edits || [];
+    // Salix
+    function patch(edits, attach){
+      edits = edits || [];
 
       // Salix
-          for (var i = 0; i < edits.length; i++){
+      for (var i = 0; i < edits.length; i++){
         var edit = edits[i];
         var type = salix.nodeType(edit);
 
-      //Salix
-      switch (type) {
-        default:
-          throw 'unsupported edit: ' + JSON.stringify(edit);
-      }
-          }
+        //Salix
+        switch (type) {
+          default:
+            throw 'unsupported edit: ' + JSON.stringify(edit);
         }
+      }
+    }
 
     //Salix
     div.salix_native = {patch: patch};
