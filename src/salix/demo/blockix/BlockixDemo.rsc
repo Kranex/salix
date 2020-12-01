@@ -6,24 +6,24 @@
 }
 @contributor{Tijs van der Storm - storm@cwi.nl - CWI}
 
-module salix::demo::blockly::BlocklyDemo
+module salix::demo::blockix::BlockixDemo
 
 import salix::App;
 import salix::HTML;
 import salix::Core;
 import lang::xml::DOM;
-import salix::lib::Blockly;
+import salix::lib::Blockix;
 import String;
 import IO;
 
 // inits the app
-SalixApp[Model] blocklyApp(str id = "blocklyDemo") = makeApp(id, init, view, update, parser = parseMsg);
+SalixApp[Model] blockixApp(str id = "blockixDemo") = makeApp(id, init, view, update, parser = parseMsg);
 
 // inits the app
-App[Model] blocklyWebApp() 
+App[Model] blockixWebApp() 
   = webApp(
-      blocklyApp(),
-      index = |project://salix/src/salix/demo/blockly/index.html|, 
+      blockixApp(),
+      index = |project://salix/src/salix/demo/blockix/index.html|, 
       static = |project://salix/src|
     ); 
 
@@ -43,7 +43,7 @@ Model init() {
 
 
 // The doors state machine.
-str workspace() = "Start using blockly and your code will be generated here!";
+str workspace() = "Start using blockix and your code will be generated here!";
 
 str data2state(Node \data){
 	if (charData(txt) := \data) return txt;
@@ -171,14 +171,14 @@ void view(Model model) {
   div(() {
     div(class("row"), () {
       div(class("col-md-12"), () {
-	      h3("Simple live Blockly IDE demo");
+	      h3("Simple live Blockix IDE demo");
 	    });
     });
     
     div(class("row"), () {
       div(class("col-md-8"), () {
         h4("Edit");
-        blockly("myBlockly", onChange(Msg::blocklyChange), () {
+        blockly("myBlockix", onChange(Msg::blocklyChange), () {
         	category("Event", hue(0), () {
         		block("event",
         			hue(0),

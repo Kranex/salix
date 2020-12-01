@@ -1,4 +1,4 @@
-module salix::lib::Blockly
+module salix::lib::Blockix
 
 import salix::Node;
 import lang::xml::DOM;
@@ -362,6 +362,8 @@ void blockly(str id, value vals...){
 		stack = [_toolbox()];
 		T();
 	}
+  
+  print("DEBUG");
 	
   	build(vals[0..-1], Node(list[Node] _, list[Attr] attrs){
     	return native("blockly", id, attrsOf(attrs), propsOf(attrs), eventsOf(attrs), extra = ("toolbox": xmlPretty(toolbox2xml(stack[0])), "blocks" : toolbox2json(stack[0])));
