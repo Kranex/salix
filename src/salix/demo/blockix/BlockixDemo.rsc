@@ -19,12 +19,17 @@ import IO;
 // inits the app
 SalixApp[Model] blockixApp(str id = "blockixDemo") = makeApp(id, init, view, update, parser = parseMsg);
 
+
+void main() {
+  println(output);
+}
+
 // inits the app
 App[Model] blockixWebApp() 
   = webApp(
       blockixApp(),
-      index = |project://salix/src/salix/demo/blockix/index.html|, 
-      static = |project://salix/src|
+      index = |project://salix-kranex/src/salix/demo/blockix/index.html|, 
+      static = |project://salix-kranex/src|
     ); 
 
 // the model for the IDE.
@@ -182,7 +187,7 @@ void view(Model model) {
         	category("Event", hue(0), () {
         		block("event",
         			hue(0),
- 					output("Event"),
+ 					salix::lib::Blockix::output("Event"),
  					inputsInline(true),
         			() {
         				message("%1", () {
@@ -218,7 +223,7 @@ void view(Model model) {
         		);
         		block("state",
         			hue(180),
- 					output("State"),
+ 					salix::lib::Blockix::output("State"),
  					inputsInline(true),
         			() {
         				message("%1", () {
