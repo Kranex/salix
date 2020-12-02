@@ -28,8 +28,8 @@ void main() {
 App[Model] blockixWebApp() 
   = webApp(
       blockixApp(),
-      index = |project://salix-kranex/src/salix/demo/blockix/index.html|, 
-      static = |project://salix-kranex/src|
+      index = |project://salix/src/salix/demo/blockix/index.html|, 
+      static = |project://salix/src|
     ); 
 
 // the model for the IDE.
