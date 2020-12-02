@@ -20,10 +20,6 @@ import IO;
 SalixApp[Model] blockixApp(str id = "blockixDemo") = makeApp(id, init, view, update, parser = parseMsg);
 
 
-void main() {
-  println(output);
-}
-
 // inits the app
 App[Model] blockixWebApp() 
   = webApp(
