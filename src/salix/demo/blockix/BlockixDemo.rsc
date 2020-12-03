@@ -155,14 +155,14 @@ str node2state(Node \node) {
 }
 
 data Msg
-  = blocklyChange(str text);
+  = blockixChange(str text);
   
 // update the model with from the msg.
 Model update(Msg msg, Model model) {
 
   switch (msg) {
-    // update from blockly
-    case blocklyChange(str text): model.src = node2state(parseXMLDOM(text));
+    // update from blockix
+    case blockixChange(str text): model.src = node2state(parseXMLDOM(text));
   }
   return model;
 }
@@ -179,7 +179,7 @@ void view(Model model) {
     div(class("row"), () {
       div(class("col-md-8"), () {
         h4("Edit");
-        blockly("myBlockix", onChange(Msg::blocklyChange), () {
+        blockix("myBlockix", onChange(Msg::blockixChange), () {
         	category("Event", hue(0), () {
         		block("event",
         			hue(0),

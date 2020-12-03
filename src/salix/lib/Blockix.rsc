@@ -9,9 +9,9 @@ import List;
 import String;
 
 
-Attr onChange(Msg(str) msg) = event("change", handler("blocklyChange", encode(msg)));
+Attr onChange(Msg(str) msg) = event("change", handler("blockixChange", encode(msg)));
 
-Msg parseMsg(str id, "blocklyChange", Handle h, map[str, str] p) 
+Msg parseMsg(str id, "blockixChange", Handle h, map[str, str] p) 
  = applyMaps(id, h, decode(id, h.id, #Msg(str))(p["msg"]));
 
 Attr resizable(bool val) = prop("resizable", "<val>");
@@ -355,7 +355,7 @@ void label(str text, value vals...){
 	addToParent(cur);
 }
 
-void blockly(str id, value vals...){
+void blockix(str id, value vals...){
 
 	// if a omnibox is supplied as a closure, construct the omnibox using black magic.	
 	if( vals != [], void() T := vals[-1]) {
@@ -366,6 +366,6 @@ void blockly(str id, value vals...){
   print("DEBUG");
 	
   	build(vals[0..-1], Node(list[Node] _, list[Attr] attrs){
-    	return native("blockly", id, attrsOf(attrs), propsOf(attrs), eventsOf(attrs), extra = ("toolbox": xmlPretty(toolbox2xml(stack[0])), "blocks" : toolbox2json(stack[0])));
+    	return native("blockix", id, attrsOf(attrs), propsOf(attrs), eventsOf(attrs), extra = ("toolbox": xmlPretty(toolbox2xml(stack[0])), "blocks" : toolbox2json(stack[0])));
   	});
 }

@@ -1,14 +1,14 @@
-function registerBlockly(salix) {
+function registerBlockix(salix) {
   var workspaces = {};
 
-  salix.Decoders.blocklyChange = function (args) {
+  salix.Decoders.blockixChange = function (args) {
     return function (event) {
       if(event.type != "ui"){
         var workspace = Blockly.Workspace.getById(event.workspaceId);
         var xml = Blockly.Xml.workspaceToDom(workspace);
         var text = new XMLSerializer().serializeToString(xml);
         console.log(text);
-        return {type: "blocklyChange",
+        return {type: "blockixChange",
             msg: text
         };
       };
@@ -17,7 +17,7 @@ function registerBlockly(salix) {
   };
 
   // Salix
-  function myBlockly(attach, id, attrs, props, events, extra){
+  function myBlockix(attach, id, attrs, props, events, extra){
     // Salix
     var resizable = false;
     var width = "100%";
@@ -122,7 +122,7 @@ function registerBlockly(salix) {
     }
     attach(div);
 
-        // Create Blockly
+    // Create Blockly
     var workspace = Blockly.inject(id, options);
     workspaces[id] = workspace;
     Blockly.defineBlocksWithJsonArray(extra.blocks);
@@ -160,5 +160,5 @@ function registerBlockly(salix) {
   }
 
   //Salix
-  salix.registerNative('blockly', myBlockly);
+  salix.registerNative('blockix', myBlockix);
 };
