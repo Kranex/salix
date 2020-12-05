@@ -363,8 +363,6 @@ void blockix(str id, value vals...){
 		T();
 	}
   
-  print("DEBUG");
-	
   	build(vals[0..-1], Node(list[Node] _, list[Attr] attrs){
     	return native("blockix", id, attrsOf(attrs), propsOf(attrs), eventsOf(attrs), extra = ("toolbox": xmlPretty(toolbox2xml(stack[0])), "blocks" : toolbox2json(stack[0])));
   	});

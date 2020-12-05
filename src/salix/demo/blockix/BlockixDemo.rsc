@@ -8,6 +8,9 @@
 
 module salix::demo::blockix::BlockixDemo
 
+import salix::demo::blockix::StateMachineAST;
+import salix::demo::blockix::Node2AST;
+
 import salix::App;
 import salix::HTML;
 import salix::Core;
@@ -159,10 +162,13 @@ data Msg
   
 // update the model with from the msg.
 Model update(Msg msg, Model model) {
-
+  
   switch (msg) {
     // update from blockix
-    case blockixChange(str text): model.src = node2state(parseXMLDOM(text));
+    case blockixChange(str text): {
+       model.src = node2state(parseXMLDOM(text));
+       print(node2ast(parseXMLDOM(text)));
+    }
   }
   return model;
 }
