@@ -156,6 +156,9 @@ function registerBlockix(salix) {
         	  		// this doesn't work. Cannot override the blocks.
         	  		Blockly.defineBlocksWithJsonArray(edit.setExtra.value);
         	  		break;
+        	  	case "toolbox":
+        	  		options.toolbox = edit.setExtra.value;
+        	  		Blockly.options(options);
         	  	default:
         	  		throw 'unsupported extra ' + edit.setExtra.name + ':' + JSON.stringify(edit);
         	  }
