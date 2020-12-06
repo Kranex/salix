@@ -10,6 +10,7 @@ module salix::demo::blockix::BlockixDemo
 
 import salix::demo::blockix::StateMachineAST;
 import salix::demo::blockix::Node2AST;
+import salix::demo::blockix::AST2Text;
 
 import salix::App;
 import salix::HTML;
@@ -20,7 +21,7 @@ import String;
 import IO;
 
 // inits the app
-SalixApp[Model] blockixApp(str id = "blockixDemo") = makeApp(id, init, view, update, parser = parseMsg);
+SalixApp[Model] blockixApp(str id = "blockixDemo") = makeApp(id, init, view, update, parser = salix::lib::Blockix::parseMsg);
 
 
 // inits the app
@@ -166,8 +167,7 @@ Model update(Msg msg, Model model) {
   switch (msg) {
     // update from blockix
     case blockixChange(str text): {
-       model.src = node2state(parseXMLDOM(text));
-       print(node2ast(parseXMLDOM(text)));
+       model.src = ast2text(node2ast(parseXMLDOM(text)));
     }
   }
   return model;
@@ -185,7 +185,7 @@ void view(Model model) {
     div(class("row"), () {
       div(class("col-md-8"), () {
         h4("Edit");
-        blockix("myBlockix", onChange(Msg::blockixChange), () {
+        blockix("myBlockix", salix::lib::Blockix::onChange(Msg::blockixChange), () {
         	category("Event", hue(0), () {
         		block("event",
         			hue(0),
@@ -199,7 +199,7 @@ void view(Model model) {
         		);
         	});
         	category("State", hue(180), () {
-        		block("state_seclaration",
+        		block("state_declaration",
         			hue(180),
         			inputsInline(true),
         			() {

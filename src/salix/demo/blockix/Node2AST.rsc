@@ -6,6 +6,7 @@ import salix::demo::blockix::StateMachine;
 import lang::xml::DOM;
 import String;
 import List;
+import IO;
 
 list[Node] getAttributes(Node element) = [attr | attr <- element.children, attribute(_,_,_) := attr];
 
@@ -22,7 +23,7 @@ str getAttribute(str name, list[Node] children) {
 list[Node] getElements(Node element) = getElements(element.children);
 list[Node] getElements(list[Node] children) = [elm | elm <- children, element(_,_,_) := elm];
 list[Node] getElementsByType(str \type, Node element) = getElementsByType(\type, element.children);
-list[Node] getElementsByType(str \type, list[Node] children) = [elm | elm <- children, getAttribute("type", elm) == \type];
+list[Node] getElementsByType(str \type, list[Node] children) = [elm | elm <- getElements(children), getAttribute("type", elm) == \type];
 
 Node getElement(str name, Node element) = getElement(name, element.children);
 Node getElement(str name, list[Node] children) {
@@ -59,21 +60,27 @@ str getValue(str name, list[Node] children) {
 
 AController node2ast(Node \node) {
   switch (\node) {
-    case document(root):
+    case document(root):{
       return node2ast(root);
-    case element(_, "xml", children):
+      }
+    case element(_, "xml", children):{
       return controller(
                events2ast(children),
                resets2ast(children),
                commands2ast(children),
                states2ast(children)
              );
+      }
   }
-  return controller([],[],[], []);
+  return controller([],[],[],[]);
 }
 
-list[AEvent] events2ast(list[Node] children)
-  = [event2ast(event) | event <- getElementsByType("Event", getElement("variables", children))];
+list[AEvent] events2ast(list[Node] children) {
+  if(element(_, "variables", events) := getElement("variables", children)) {
+    return [event2ast(event) | event <- getElementsByType("Event", events)];
+  }
+  return [];
+} 
 
 AEvent event2ast(Node evnt) {
  str name = [nm | charData(nm) <- evnt.children][0];
@@ -90,9 +97,9 @@ list[ACommand] commands2ast(list[Node] children) {
    return [];
 }
 
-list[AState] states2ast (list[Node] children)
-   = [state2ast(state) | state <- getElementsByType("state_declaration", children)];
-
+list[AState] states2ast (list[Node] children){
+  return [state2ast(state) | state <- getElementsByType("state_declaration", children)];
+}
 /*
   block stateDeclaration:
     statement:
@@ -104,16 +111,20 @@ list[AState] states2ast (list[Node] children)
  
 AState state2ast(Node stateDeclaration) {
   str name = getValue("STATE", getElements(stateDeclaration));
-  list[Node] transitions = getElementsByType("transition", getElement("statement", stateDeclaration));
- 
-  return state(id("<name>"), [], transitions2ast(transitions));
+  
+  if(element(_, "statement", children) := getElement("statement", stateDeclaration)) {
+    return state(id("<name>"), [], transitions2ast(getElementsByType("transition", children)));
+  }
+  return state(id("<name>"), [], []); 
 } 
 
 list[ATransition] transitions2ast(list[Node] transition) {
   list[ATransition] transitions = [transition2ast(t) | t <- transition];
   
   for(t <- transition) {
-    transitions += transitions2ast(getElementsByType("transition", getElement("next", t)));
+    if(element(_, "next", children) := getElement("next", t)) {
+      transitions += transitions2ast(getElementsByType("transition", children));
+    }
   }
   
   return transitions;
@@ -121,7 +132,7 @@ list[ATransition] transitions2ast(list[Node] transition) {
 
 ATransition transition2ast(Node transition) {
     str event = getValue("EVENT", transition.children);
-    str state = getValue("State", transition.children);
+    str state = getValue("STATE", transition.children);
     return salix::demo::blockix::StateMachineAST::transition(id(event), id(state));
 }
 

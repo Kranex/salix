@@ -1,7 +1,7 @@
 module salix::demo::blockix::StateMachineAST
 
 data AId(loc src = |tmp:///|)
-  = id(str name);
+  = id(str id);
   
 data ANat(loc src = |tmp:///|)
   = nat(int i);
