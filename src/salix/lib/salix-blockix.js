@@ -148,8 +148,20 @@ function registerBlockix(salix) {
 
         //Salix
         switch (type) {
+          case "setExtra":
+        	  switch(edit.setExtra.name){
+        	  	case "blocks":
+					//var workspace = Blockly.Workspace.getById(event.workspaceId);
+					//var xml = Blockly.Xml.workspaceToDom(workspace);
+        	  		// this doesn't work. Cannot override the blocks.
+        	  		Blockly.defineBlocksWithJsonArray(edit.setExtra.value);
+        	  		break;
+        	  	default:
+        	  		throw 'unsupported extra ' + edit.setExtra.name + ':' + JSON.stringify(edit);
+        	  }
+        	  break;
           default:
-            throw 'unsupported edit: ' + JSON.stringify(edit);
+            throw 'unsupported edit ' + type + ':' + JSON.stringify(edit);
         }
       }
     }

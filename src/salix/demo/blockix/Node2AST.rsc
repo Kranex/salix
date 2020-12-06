@@ -1,12 +1,9 @@
 module salix::demo::blockix::Node2AST
 
 import salix::demo::blockix::StateMachineAST;
-import salix::demo::blockix::StateMachine;
 
 import lang::xml::DOM;
 import String;
-import List;
-import IO;
 
 list[Node] getAttributes(Node element) = [attr | attr <- element.children, attribute(_,_,_) := attr];
 

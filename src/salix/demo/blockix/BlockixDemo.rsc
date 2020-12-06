@@ -19,6 +19,7 @@ import lang::xml::DOM;
 import salix::lib::Blockix;
 import String;
 import IO;
+import List;
 
 // inits the app
 SalixApp[Model] blockixApp(str id = "blockixDemo") = makeApp(id, init, view, update, parser = salix::lib::Blockix::parseMsg);
@@ -34,12 +35,15 @@ App[Model] blockixWebApp()
 
 // the model for the IDE.
 alias Model = tuple[
-  str src
+  str src,
+  int symbol
 ];
+
+list[str] symbols = ["=\>", "--\>"];
   
 // init the IDE  
 Model init() {
-  Model model = <"">;
+  Model model = <"", 0>;
   
   // init the model with the doors state machine.
   model.src = workspace();
@@ -51,8 +55,11 @@ Model init() {
 str workspace() = "Start using blockix and your code will be generated here!";
 
 data Msg
-  = blockixChange(str text);
+  = changeSymbol()
+  | blockixChange(str text);
   
+
+
 // update the model with from the msg.
 Model update(Msg msg, Model model) {
   
@@ -61,6 +68,9 @@ Model update(Msg msg, Model model) {
     case blockixChange(str text): {
        model.src = ast2text(node2ast(parseXMLDOM(text)));
     }
+    case changeSymbol():
+        model.symbol = (model.symbol + 1) % size(symbols);  
+    
   }
   return model;
 }
@@ -73,7 +83,12 @@ void view(Model model) {
 	      h3("Simple live Blockix IDE demo");
 	    });
     });
-    
+    div(class("row"), (){
+      div(class("col"), (){
+        button(onClick(changeSymbol()), "Change Symbol");
+      });
+      div(class("col"), "<model.symbol>");
+    });
     div(class("row"), () {
       div(class("col-md-8"), () {
         h4("Edit");
@@ -109,7 +124,7 @@ void view(Model model) {
         			previousStatement(),
         			inputsInline(true),
         			() {
-        				message("%1 =\> %2", () {
+        				message("%1 <symbols[model.symbol]> %2", () {
         					inputValue("EVENT", check = ["Event"]);
         					inputValue("STATE", check = ["State"]);        					
         				});
