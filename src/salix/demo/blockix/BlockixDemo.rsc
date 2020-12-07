@@ -66,6 +66,7 @@ Model update(Msg msg, Model model) {
   switch (msg) {
     // update from blockix
     case blockixChange(str text): {
+       println(xmlPretty(parseXMLDOM(text)));
        model.src = ast2text(node2ast(parseXMLDOM(text)));
     }
     case changeSymbol():
