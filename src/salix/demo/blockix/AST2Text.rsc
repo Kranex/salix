@@ -23,5 +23,12 @@ str state2text(AState state)
     '<for(transition <- state.transitions){><transition2text(transition)>
     '<}>end";
     
-str transition2text(ATransition transition)
-  = "<transition.event.id> =\> <transition.state.id>";
+str transition2text(ATransition transition) {
+  switch(transition) {
+    case transition(event, state):
+      return "<event.id> =\> <state.id>";
+    case transitionAfter(number, event, state):
+      return "after <number.val> <event.id> <state.id>";
+  }
+}
+

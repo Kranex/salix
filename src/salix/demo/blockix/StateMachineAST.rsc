@@ -4,7 +4,7 @@ data AId(loc src = |tmp:///|)
   = id(str id);
   
 data ANat(loc src = |tmp:///|)
-  = nat(int i);
+  = nat(int val);
 
 data AController(loc src = |tmp:///|)
   = controller(

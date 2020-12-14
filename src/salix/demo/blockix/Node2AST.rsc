@@ -110,7 +110,7 @@ AState state2ast(Node stateDeclaration) {
   str name = getValue("STATE", getElements(stateDeclaration));
   
   if(element(_, "statement", children) := getElement("statement", stateDeclaration)) {
-    return state(id("<name>"), [], transitions2ast(getElementsByType("transition", children)));
+    return state(id("<name>"), [], transitions2ast([child | child <- children, element(_,"block", _) := child]));
   }
   return state(id("<name>"), [], []); 
 } 
@@ -120,7 +120,7 @@ list[ATransition] transitions2ast(list[Node] transition) {
   
   for(t <- transition) {
     if(element(_, "next", children) := getElement("next", t)) {
-      transitions += transitions2ast(getElementsByType("transition", children));
+      transitions += transitions2ast([child | child <- children, element(_,"block",_) := child]);
     }
   }
   
@@ -128,9 +128,16 @@ list[ATransition] transitions2ast(list[Node] transition) {
 }
 
 ATransition transition2ast(Node transition) {
+    str \type = getAttribute("type", transition);
     str event = getValue("EVENT", transition.children);
     str state = getValue("STATE", transition.children);
-    return salix::demo::blockix::StateMachineAST::transition(id(event), id(state));
+
+    if(getAttribute("type", transition) == "transition"){
+        return salix::demo::blockix::StateMachineAST::transition(id(event), id(state));
+    }
+    int after = toInt(getData(getElement("field", transition.children)));
+  
+    return salix::demo::blockix::StateMachineAST::transitionAfter(nat(after),id(event), id(state));
 }
 
 

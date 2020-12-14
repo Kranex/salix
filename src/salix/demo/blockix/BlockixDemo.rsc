@@ -36,14 +36,15 @@ App[Model] blockixWebApp()
 // the model for the IDE.
 alias Model = tuple[
   str src,
+  bool afterTransitions,
   int symbol
 ];
 
-list[str] symbols = ["=\>", "--\>"];
+list[str] symbols = ["=\>", "=?\>"];
   
 // init the IDE  
 Model init() {
-  Model model = <"", 0>;
+  Model model = <"", false, 0>;
   
   // init the model with the doors state machine.
   model.src = workspace();
@@ -56,6 +57,7 @@ str workspace() = "Start using blockix and your code will be generated here!";
 
 data Msg
   = changeSymbol()
+  | toggleAfterTransitions()
   | blockixChange(str text);
   
 
@@ -71,6 +73,8 @@ Model update(Msg msg, Model model) {
     }
     case changeSymbol():
         model.symbol = (model.symbol + 1) % size(symbols);  
+    case toggleAfterTransitions():
+        model.afterTransitions = !model.afterTransitions;  
     
   }
   return model;
@@ -87,6 +91,12 @@ void view(Model model) {
     div(class("row"), (){
       div(class("col"), (){
         button(onClick(changeSymbol()), "Change Symbol");
+      });
+      div(class("col"), (){
+        button(
+          onClick(toggleAfterTransitions()), 
+          "After Transitions: <(model.afterTransitions ? "enabled" : "disabled")>"
+         );
       });
       div(class("col"), "<model.symbol>");
     });
@@ -131,6 +141,21 @@ void view(Model model) {
         				});
         			}
         		);
+            if(model.afterTransitions) {
+              block("transition_after",
+                hue(180),
+                nextStatement(),
+                previousStatement(),
+                inputsInline(true),
+                () {
+                  message("after %1, %2 <symbols[model.symbol]> %3", (){
+                    fieldNumber("AFTER", val = 0);
+                    inputValue("EVENT", check = ["Event"]);
+                    inputValue("STATE", check = ["State"]);        					
+                  });
+                }
+              );
+        		};
         		block("state",
         			hue(180),
  					salix::lib::Blockix::output("State"),

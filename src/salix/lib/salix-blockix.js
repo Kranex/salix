@@ -145,25 +145,34 @@ function registerBlockix(salix) {
       for (var i = 0; i < edits.length; i++){
         var edit = edits[i];
         var type = salix.nodeType(edit);
-
+        // 
         //Salix
         switch (type) {
           case "setExtra":
-        	  switch(edit.setExtra.name){
-        	  	case "blocks":
-	              var xml = Blockly.Xml.workspaceToDom(workspace);
-        	  	  // this doesn't work. Cannot override the blocks.
-        	  	  Blockly.defineBlocksWithJsonArray(edit.setExtra.value);
-        	      Blockly.Xml.clearWorkspaceAndLoadFromXml(xml, workspace);
-        	      workspace.toolbox_.refreshSelection();
-        	  	  break;
-        	  	case "toolbox":
-        	  	  options.toolbox = edit.setExtra.value;
-        	  	  Blockly.options(options);
-        	  	default:
-        	  	  throw 'unsupported extra ' + edit.setExtra.name + ':' + JSON.stringify(edit);
-        	  }
-        	  break;
+            switch(edit.setExtra.name){
+              case "blocks":
+                var xml = Blockly.Xml.workspaceToDom(workspace);
+                // Redfine blocks. This doesn't get rid of existing blocks.
+                Blockly.defineBlocksWithJsonArray(edit.setExtra.value);
+                Blockly.Xml.clearWorkspaceAndLoadFromXml(xml, workspace);
+                // Refresh the toolbox
+                workspace.getToolbox().refreshSelection();
+                break;
+              case "toolbox":
+                var xml = Blockly.Xml.workspaceToDom(workspace);
+                options.toolbox = edit.setExtra.value;
+                // generate new options.
+                workspace.options = new Blockly.Options(options);
+                // destroy old flyout and regen the toolbox.
+                workspace.getToolbox().getFlyout().dispose();
+                workspace.getToolbox().init();
+                // Refresh
+                workspace.getToolbox().refreshSelection();
+                break;
+              default:
+                throw 'unsupported extra ' + edit.setExtra.name + ':' + JSON.stringify(edit);
+            }
+            break;
           default:
             throw 'unsupported edit ' + type + ':' + JSON.stringify(edit);
         }
