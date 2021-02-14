@@ -104,6 +104,14 @@ void view(Model model) {
       div(class("col-md-8"), () {
         h4("Edit");
         blockix("myBlockix", salix::lib::Blockix::onChange(Msg::blockixChange), () {
+          /*category("my category", hue(120), expanded(true), () {
+        	  block("my_block", hue(40), nextStatement(), previousStatement(), () {
+        	    message("My Block!");
+        	    message("%1", () {
+        	      inputStatement("STATEMENT");  
+        	    });
+        	  });
+        	});*/
         	category("Event", hue(0), () {
         		block("event",
         			hue(0),

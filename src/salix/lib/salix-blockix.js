@@ -169,6 +169,11 @@ function registerBlockix(salix) {
                 // Refresh
                 workspace.getToolbox().refreshSelection();
                 break;
+              case "workspace":
+            	  // Replace workspace with the one recieved in the patch.
+            	  xml = new DOMParser().parseFromString(edit.setExtra.value);
+            	  console.log(xml);
+				  Blockly.Xml.clearWorkspaceAndLoadFromXml(xml, workspace);
               default:
                 throw 'unsupported extra ' + edit.setExtra.name + ':' + JSON.stringify(edit);
             }

@@ -43,6 +43,8 @@ Attr renderer(str val) = prop("renderer", "<val>");
 
 // ---- 
 
+private data Workspace = workspace(Node xml);
+
 // definition
 
 // Definition for the internal Toolbox/Workspace/Block representation (the omnibox).
@@ -362,8 +364,16 @@ void blockix(str id, value vals...){
 		stack = [_toolbox()];
 		T();
 	}
+ 
+  map[str, value] extraParams = ("toolbox": xmlPretty(toolbox2xml(stack[0])), "blocks": toolbox2json(stack[0]));
   
-  	build(vals[0..-1], Node(list[Node] _, list[Attr] attrs){
-    	return native("blockix", id, attrsOf(attrs), propsOf(attrs), eventsOf(attrs), extra = ("toolbox": xmlPretty(toolbox2xml(stack[0])), "blocks" : toolbox2json(stack[0])));
-  	});
+  for(val <- vals) {
+     if(workspace(xml) := val){
+      extraParams += ("workspace": xmlPretty(xml));
+     } 
+  }
+  
+  build(vals[0..-1], Node(list[Node] _, list[Attr] attrs){
+    return native("blockix", id, attrsOf(attrs), propsOf(attrs), eventsOf(attrs), extra = extraParams);
+  });
 }
